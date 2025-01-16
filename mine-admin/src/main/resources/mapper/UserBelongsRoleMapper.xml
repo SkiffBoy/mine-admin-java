@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skiffboy.mine.admin.mapper.UserBelongsRoleMapper">
+
+    <select id="selectUsersByRoleId" resultType="com.skiffboy.mine.admin.model.permission.User">
+        select u.id,
+               u.username,
+               u.password,
+               u.user_type,
+               u.nickname,
+               u.phone,
+               u.email,
+               u.avatar,
+               u.signed,
+               u.status,
+               u.login_ip,
+               u.login_time,
+               u.backend_setting,
+               u.created_by,
+               u.updated_by,
+               u.created_at,
+               u.updated_at,
+               u.remark
+        from user_belongs_role ur,
+             user u
+        where ur.id = #{roleId}
+          and ur.user_id = u.id
+    </select>
+
+    <select id="selectRolesByUserId" resultType="com.skiffboy.mine.admin.model.permission.Role">
+        select r.id,
+               r.name,
+               r.code,
+               r.status,
+               r.sort,
+               r.created_by,
+               r.updated_by,
+               r.created_at,
+               r.updated_at,
+               r.remark
+        from user_belongs_role ur,
+             role r
+        where ur.role_id = r.id
+          and ur.user_id = #{userId}
+    </select>
+
+    <select id="selectRoleIdsByUserId" resultType="java.lang.Long">
+        select r.id from user_belongs_role ur, role r
+        where ur.role_id = r.id and ur.user_id = #{userId}
+    </select>
+
+    <select id="selectUserRoles" resultType="com.skiffboy.mine.admin.model.permission.RoleCode">
+        select r.id,
+               r.name,
+               r.code
+        from user_belongs_role ur,
+             role r
+        where ur.role_id = r.id
+          and ur.user_id = #{userId}
+          and r.status = 1
+    </select>
+</mapper>

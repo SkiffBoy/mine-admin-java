@@ -1,0 +1,96 @@
+spring:
+  jackson.date-format: yyyy-MM-dd HH:mm:ss
+  jackson.time-zone: GMT+8
+  application:
+    name: mine-admin
+  # DataSource Config
+  datasource:
+    url: jdbc:mysql://localhost:3306/mineadmin
+    username: root
+    password: 12345678
+  servlet:
+    multipart:
+      max-request-size: 50MB
+      max-file-size: 50MB
+
+server:
+  port: 8501
+  undertow:
+    # 默认不限制
+    # max-http-post-size: 100MB
+    threads:
+      # 负责处理非阻塞的网络IO线程数, 通常设置为与CPU核心数相等的值。
+      io: 8
+      # 阻塞任务线程数
+      worker: 200
+    # 设置连接在不处理请求的情况下闲置的时间。
+    # no-request-timeout: 3s
+    direct-buffers: true
+    buffer-size: 10240
+  compression:
+    enabled: true
+
+mybatis-flex:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+# Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # token有效期 (必定过期) 单位: 秒
+  timeout: 7200
+  # token最低活跃时间 (指定时间无操作就过期) 单位: 秒
+  active-timeout: 3600
+  # 关闭自动续签
+  autoRenew: false
+  # 允许动态设置 token 有效期
+  dynamic-active-timeout: true
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # 同一账号最大登录数量
+  max-login-count: 10
+  # 是否尝试从header里读取token
+  is-read-header: true
+  # 是否尝试从cookie里读取token
+  is-read-cookie: false
+  # token前缀
+  token-prefix: "Bearer"
+  # jwt秘钥
+  jwt-secret-key: K387fScDIXorX4HSUvyoG5SfHu
+
+
+springdoc:
+  version: 2.3.0
+  #api-docs.path: /swagger-api-docs
+  api-docs.path: /http.json
+  packages-to-scan: com.skiffboy.mine.admin
+  swagger-ui:
+    path: /swagger
+    tryItOutEnabled: true
+    tagsSorter: alpha
+    groups-order: DESC
+    operations-sorter: method
+    filter: true
+    display-request-duration: true
+    disable-swagger-default-url: true
+    use-root-path: true
+  show-actuator: false
+
+
+dromara:
+  x-file-storage: #文件存储配置
+    default-platform: local-file #默认使用的存储平台
+    thumbnail-suffix: ".min.jpg" #缩略图后缀，例如【.min.jpg】【.png】
+    local-plus:
+      - platform: local-file # 存储平台标识
+        enable-storage: true  #启用存储
+        enable-access: true #启用访问（线上请使用 Nginx 配置，效率更高）
+        domain: http://127.0.0.1:${server.port:8080}/uploads/ # 访问域名，例如：“http://127.0.0.1:8030/file/”，注意后面要和 path-patterns 保持一致，“/”结尾，本地存储建议使用相对路径，方便后期更换域名
+        base-path: '' # 基础路径
+        path-patterns: /uploads/** # 访问路径
+        # 存储路径
+        storage-path: ${project.basedir}/uploads/
